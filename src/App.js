@@ -24,6 +24,11 @@ export default function App() {
 
 
 
+    //url1: local ganache blockchain
+    //url2: infura node that belongs to me
+
+
+
     const url1 = "HTTP://127.0.0.1:7545";
     const url2 = "https://mainnet.infura.io/v3/483de91e9957450c84147cad733cb116";
 
@@ -34,6 +39,7 @@ export default function App() {
         setLoading1(true);
 
         try {
+            //get balance method
             let bal = (await web3.eth.getBalance(sendAddress)).toString();
             setBalance(web3.utils.fromWei(bal, 'ether'));
             setLoading1(false);
@@ -87,15 +93,19 @@ export default function App() {
         else {
 
             try {
-
+                //prompting private key of sender wallet 
                 let key = prompt("Enter Private Key");
                 if (!key || key == "") return;
                 setPrivateKey(key);
                 setLoading2(true);
                 const nonce = await web3.eth.getTransactionCount(sendAddress);
+
+                //estimating gas price and gas limit
                 var gasPrice = (await web3.eth.getGasPrice()).toString();
                 var gasLimit = (await web3.eth.getBlock("latest")).gasLimit
 
+
+                //instantiation of transaction object
                 const transaction = {
 
 
@@ -106,11 +116,13 @@ export default function App() {
                     'nonce': nonce
 
                 }
-                console.log(transaction, "   ", privateKey);
+
+                //console.log(transaction, "   ", privateKey);
 
 
                 const signedTransaction = await web3.eth.accounts.signTransaction(transaction, privateKey);
 
+                //transact method
                 await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
                 setLoading2(false);
                 alert("Transaction Successful!");
